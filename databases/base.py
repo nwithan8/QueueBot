@@ -1,5 +1,7 @@
+import csv
+import sqlite3
 from functools import wraps
-from typing import List, Any
+from typing import List, Any, Union
 
 from sqlalchemy import create_engine, MetaData, null
 from sqlalchemy.ext.declarative import declarative_base
@@ -51,8 +53,8 @@ def false_if_error(func):
 
 def table_exists(table_name: str) -> Any:
     def decorator(func):
-        def wrapper(self, *args, **kwargs):
-            if table_name not in self.registered_tables:
+        def wrapper(*args, **kwargs):
+            if table_name not in args[0].registered_tables:
                 raise Exception(f"Table schema {table_name} does not exist")
             return func(*args, **kwargs)
 
@@ -81,6 +83,21 @@ class SQLAlchemyDatabase:
             schema.__table__.create(self.engine, checkfirst=True)
             self.registered_tables.append(schema.__tablename__)
 
+    def export_table_to_csv(self, table_name: str, file_path: str) -> bool:
+        try:
+            conn = sqlite3.connect(self.sqlite_file)
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT * FROM {table_name}")
+
+            with open(file_path, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([i[0] for i in cursor.description])
+                writer.writerows(cursor.fetchall())
+            conn.close()
+            return True
+        except Exception as error_occurred:
+            return False
+
     def commit(self):
         self.session.commit()
 
@@ -107,31 +124,39 @@ class SQLAlchemyDatabase:
         Session.configure(bind=self.engine)
         self.session = Session()
 
-    def get_first_entry(self, table_schema, order=None):
+    def get_first_entry(self, table_schema, order=None) -> Union[None, Any]:
         query = self.session.query(table_schema)
         if order:
             query = query.order_by(order)
         return query.first()
 
-    def get_all_entries(self, table_schema, order=None):
+    def get_all_entries(self, table_schema, order=None) -> List[Any]:
         query = self.session.query(table_schema)
         if order:
             query = query.order_by(order)
         return query.all()
 
-    def get_all_by_filters(self, table, order=None, **kwargs):
+    def get_all_by_filters(self, table, order=None, **kwargs) -> List[Any]:
         query = self.session.query(table).filter_by(**kwargs)
         if order:
             query = query.order_by(order)
         return query.all()
 
-    def get_first_by_filters(self, table, order=None, **kwargs):
+    def get_first_by_filters(self, table, order=None, **kwargs) -> Any:
         query = self.session.query(table).filter_by(**kwargs)
         if order:
             query = query.order_by(order)
         return query.first()
 
-    def get_attribute_from_first_entry(self, table_schema, field_name, order=None):
+    def delete_by_filters(self, table, order=None, **kwargs) -> bool:
+        query = self.session.query(table).filter_by(**kwargs)
+        if order:
+            query = query.order_by(order)
+        query.delete()
+        self.commit()
+        return True
+
+    def get_attribute_from_first_entry(self, table_schema, field_name, order=None) -> Any:
         entry = self.get_first_entry(table_schema=table_schema, order=order)
         return getattr(entry, field_name, None)
 
@@ -142,14 +167,14 @@ class SQLAlchemyDatabase:
         return self.update_entry_single_field(entry, field_name, field_value)
 
     @false_if_error
-    def create_entry(self, table_schema, **kwargs):
+    def create_entry(self, table_schema, **kwargs) -> Union[bool, Any]:
         entry = table_schema(**kwargs)
         self.session.add(entry)
         self.commit()
         return entry
 
     @false_if_error
-    def create_entry_if_does_not_exist(self, table_schema, fields_to_check: List[str], **kwargs):
+    def create_entry_if_does_not_exist(self, table_schema, fields_to_check: List[str], **kwargs) -> Union[bool, Any]:
         filters = {k: v for k, v in kwargs.items() if k in fields_to_check}
         entries = self.get_all_by_filters(table=table_schema, **filters)
         if not entries:

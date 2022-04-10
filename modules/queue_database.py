@@ -1,7 +1,7 @@
 import datetime
 from typing import List, Union
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, desc
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, desc, Identity
 from sqlalchemy.ext.declarative import declarative_base
 
 import databases.base as db
@@ -10,30 +10,29 @@ Base = declarative_base()
 
 
 def _next_unprocessed(session) -> Union['QueueEntry', None]:
-    return session.query(QueueEntry).filter(QueueEntry.Processed is False).order_by(
-        QueueEntry.TimeStamp).first()
+    return session.query(QueueEntry).filter(QueueEntry.processed is False).order_by(
+        QueueEntry.timestamp).first()
 
 
 class QueueEntry:
     __tablename__ = "queue"
-    ID = Column(Integer, autoincrement=True)
-    TimeStamp = Column(DateTime, nullable=False)
-    Processed = Column(Boolean, nullable=False)
+    timestamp = Column("timestamp", DateTime, nullable=False)
+    processed = Column("processed", Boolean, nullable=False)
 
     @db.none_as_null
     def __init__(self, timestamp: datetime.datetime = None, processed: bool = False, **kwargs):
-        self.TimeStamp = timestamp or kwargs.get('Timestamp') or datetime.datetime.now()
-        self.Processed = processed or kwargs.get('Processed') or False
+        self.timestamp = timestamp or kwargs.get('timestamp') or datetime.datetime.now()
+        self.processed = processed or kwargs.get('processed') or False
 
 
 class UserQueueEntry(QueueEntry, Base):
     __tablename__ = 'user_queue'
-    Entry = Column(String(1000), primary_key=True, nullable=False)
+    user_id = Column("user_id", String(1000), primary_key=True, nullable=False)
 
     @db.none_as_null
     def __init__(self, user_id: int = None, **kwargs):
         super().__init__()
-        self.Entry = f"{user_id}" or kwargs.get('entry') or None
+        self.user_id = f"{user_id}" if user_id else kwargs.get('user_id', None)
 
     @property
     def next_unprocessed(self) -> Union['UserQueueEntry', None]:
@@ -63,8 +62,11 @@ class QueueDatabase(db.SQLAlchemyDatabase):
         :param user_id:
         :return:
         """
-        user_queue_entry = self.create_entry_if_does_not_exist(table_schema=UserQueueEntry, fields_to_check=["Entry"],
-                                                               Entry=f"{user_id}")
+        user_queue_entry = self.create_entry_if_does_not_exist(table_schema=UserQueueEntry, fields_to_check=["user_id"],
+                                                               user_id=f"{user_id}")
+        if user_queue_entry is False:
+            return None
+        return user_queue_entry
 
     @db.table_exists(table_name='user_queue')
     def find_user_location_in_queue(self, user_id: int) -> Union[int, None]:
@@ -76,10 +78,10 @@ class QueueDatabase(db.SQLAlchemyDatabase):
         """
         # get all unprocessed entries
         unprocessed_entries = self.get_all_by_filters(table=UserQueueEntry, order=desc(UserQueueEntry.ID),
-                                                      Processed=False)
+                                                      processed=False)
         counter = 1
         for entry in unprocessed_entries:
-            if entry.Entry == f'{user_id}':
+            if entry.user_id == f'{user_id}':
                 return counter
             counter += 1
         return None  # user not found
@@ -92,7 +94,7 @@ class QueueDatabase(db.SQLAlchemyDatabase):
         :param user_id:
         :return:
         """
-        return self.get_first_by_filters(table=UserQueueEntry, Entry=f'{user_id}')
+        return self.get_first_by_filters(table=UserQueueEntry, user_id=f'{user_id}')
 
     @db.table_exists(table_name='user_queue')
     def update_user_status_in_queue(self, user_id: int, status: bool):
@@ -103,7 +105,7 @@ class QueueDatabase(db.SQLAlchemyDatabase):
         :param status:
         :return:
         """
-        user_queue_entry = self.get_first_by_filters(table=UserQueueEntry, Entry=f'{user_id}')
+        user_queue_entry = self.get_first_by_filters(table=UserQueueEntry, user_id=f'{user_id}')
         if user_queue_entry:
             user_queue_entry.Processed = status
             self.commit()
@@ -136,20 +138,17 @@ class QueueDatabase(db.SQLAlchemyDatabase):
         return self.get_all_by_filters(table=UserQueueEntry)
 
     @db.table_exists(table_name='user_queue')
-    def delete_user_from_queue(self, user_id: int) -> None:
+    def delete_user_from_queue(self, user_id: int) -> bool:
         """
         Delete a user from the queue
 
         :param user_id:
         :return:
         """
-        user_queue_entry = self.get_first_by_filters(table=UserQueueEntry, Entry=f'{user_id}')
-        if user_queue_entry:
-            user_queue_entry.delete()
-            self.commit()
+        return self.delete_by_filters(table=UserQueueEntry, user_id=f'{user_id}')
 
     @db.table_exists(table_name='user_queue')
-    def purge(self):
+    def purge_users(self):
         """
         Purge all processed users from the queue
 
@@ -158,3 +157,25 @@ class QueueDatabase(db.SQLAlchemyDatabase):
         for user in self.get_all_processed_users():
             user.delete()
             self.commit()
+
+    @db.table_exists(table_name='user_queue')
+    def mass_remove_users(self, user_ids: List[int]):
+        """
+        Mass remove users from the queue
+
+        :param user_ids:
+        :return:
+        """
+        for user_id in user_ids:
+            self.delete_user_from_queue(user_id)
+            self.commit()
+
+    @db.table_exists(table_name='user_queue')
+    def export_user_queue_to_csv(self, csv_file: str) -> bool:
+        """
+        Export all users from the queue to a csv file
+
+        :param csv_file:
+        :return:
+        """
+        return self.export_table_to_csv(table_name=UserQueueEntry.__tablename__, file_path=csv_file)
