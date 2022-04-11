@@ -1,0 +1,17 @@
+Logging: INFO
+
+Discord:
+  BotToken:
+  # Right-click on your server's icon -> "Copy ID"
+  ServerID:
+  # List of IDs of users who can run admin commands
+  # Right-click on your profile picture -> "Copy ID"
+  AdminIDs:
+    -
+  # List of roles that users with can run admin commands
+  AdminRoleNames:
+    -
+
+Extras:
+  # See README.md for details
+  Analytics: false
