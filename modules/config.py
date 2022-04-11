@@ -3,10 +3,11 @@ from typing import List
 import confuse
 
 
-class ConfigParser:
-    def __init__(self, app_name: str, config_file: str):
+class Config:
+    def __init__(self, app_name: str, config_files: List[str]):
         self.config = confuse.Configuration(app_name)
-        self.config.set_file(filename=config_file)
+        for config_file in config_files:
+            self.config.set_file(filename=config_file)
 
     def get(self, key: str, path: List[str] = None, default=None):
         try:
@@ -17,4 +18,6 @@ class ConfigParser:
                 value = value[p].get()
             return value.get(key)
         except confuse.NotFoundError:
+            return default
+        except confuse.ConfigTypeError:
             return default

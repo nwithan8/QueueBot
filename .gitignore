@@ -1,4 +1,5 @@
 /credentials.py
 /queue.db
 /queue.csv
-/config.yaml
+/queue_bot_config.yaml
+/bot_config.yaml

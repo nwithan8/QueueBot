@@ -1,22 +1,24 @@
 import discord
 from discord.ext import commands, bridge
 
-import credentials
+from modules.bot_config import BotConfig
 from modules.logs import *
 
 info("Starting application...")
 
+bot_config = BotConfig(app_name="QueueBot")
+
 logging.basicConfig(format='%(levelname)s:%(message)s',
-                    level=logging.ERROR if credentials.SUPPRESS_LOGS else logging.INFO)
+                    level=bot_config.log_level)
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = bridge.Bot(credentials.BOT_PREFIX)
-
+intents.members = True
+bot = bridge.Bot(command_prefix=bot_config.bot_prefix)
 formatter = commands.HelpCommand(show_check_failure=False)
 
 extensions = [
-    "QueueBot"
+    "queue_bot"
 ]
 
 
@@ -25,7 +27,7 @@ async def on_ready():
     info(f'\n\nLogged in as : {bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}\n')
     await bot.change_presence(status=discord.Status.idle,
                               activity=discord.Game(
-                                  name=f'Making lists, checking them twice | {credentials.BOT_PREFIX}'))
+                                  name=f'Making lists, checking them twice | {bot_config.bot_prefix}'))
     info(f'Successfully logged in and booted...!\n')
 
 
@@ -33,4 +35,4 @@ if __name__ == '__main__':
     info("Connecting to Discord...")
     for ext in extensions:
         bot.load_extension(ext)
-    bot.run(credentials.DISCORD_BOT_TOKEN)
+    bot.run(bot_config.bot_token)

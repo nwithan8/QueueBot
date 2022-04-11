@@ -1,16 +1,16 @@
 import discord
 from discord.ext.bridge import bridge_command, BridgeContext
 
-from configuration import QueueBotConfig
+from queue_bot_configuration import QueueBotConfig
 from modules.base_cog import BaseCog
 from modules.discord_utils import send_error, is_admin
 from modules.utils import int_to_place
-from queue_database import QueueDatabase, UserQueueEntry
+from queue_bot_database import QueueDatabase, UserQueueEntry
 
 
 class QueueBot(BaseCog, name="QueueBot"):
     def __init__(self, bot):
-        super().__init__(bot=bot, config=QueueBotConfig(config_file="config.yaml"))
+        super().__init__(bot=bot, config=QueueBotConfig(config_files=["queue_bot_config.yaml"]))
         self.database = QueueDatabase(sqlite_file="queue.db", table_schemas=[UserQueueEntry])
 
     @bridge_command(name="queue-ping", aliases=["qping"])

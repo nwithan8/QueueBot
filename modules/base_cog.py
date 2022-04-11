@@ -3,12 +3,12 @@ from typing import List
 import discord
 from discord.ext.commands import Cog
 
+from modules.cog_config import CogConfig
 from modules.discord_utils import get_users, get_roles
-from modules.base_config import BaseConfig
 
 
 class BaseCog(Cog):
-    def __init__(self, bot: discord.Bot, config: BaseConfig):
+    def __init__(self, bot: discord.Bot, config: CogConfig):
         self.bot = bot
         self.config = config
 
