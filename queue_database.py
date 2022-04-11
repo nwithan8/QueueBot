@@ -77,7 +77,7 @@ class QueueDatabase(db.SQLAlchemyDatabase):
         :return:
         """
         # get all unprocessed entries
-        unprocessed_entries = self.get_all_by_filters(table=UserQueueEntry, order=desc(UserQueueEntry.ID),
+        unprocessed_entries = self.get_all_by_filters(table=UserQueueEntry, order=desc(UserQueueEntry.timestamp),
                                                       processed=False)
         counter = 1
         for entry in unprocessed_entries:

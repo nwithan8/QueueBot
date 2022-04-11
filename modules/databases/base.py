@@ -123,31 +123,31 @@ class SQLAlchemyDatabase:
 
     def get_first_entry(self, table_schema, order=None) -> Union[None, Any]:
         query = self.session.query(table_schema)
-        if order:
+        if order is not None:
             query = query.order_by(order)
         return query.first()
 
     def get_all_entries(self, table_schema, order=None) -> List[Any]:
         query = self.session.query(table_schema)
-        if order:
+        if order is not None:
             query = query.order_by(order)
         return query.all()
 
     def get_all_by_filters(self, table, order=None, **kwargs) -> List[Any]:
         query = self.session.query(table).filter_by(**kwargs)
-        if order:
+        if order is not None:
             query = query.order_by(order)
         return query.all()
 
     def get_first_by_filters(self, table, order=None, **kwargs) -> Any:
         query = self.session.query(table).filter_by(**kwargs)
-        if order:
+        if order is not None:
             query = query.order_by(order)
         return query.first()
 
     def delete_by_filters(self, table, order=None, **kwargs) -> bool:
         query = self.session.query(table).filter_by(**kwargs)
-        if order:
+        if order is not None:
             query = query.order_by(order)
         query.delete()
         self.commit()
