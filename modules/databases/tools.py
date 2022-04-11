@@ -1,9 +1,7 @@
 from typing import List
 
-from sqlalchemy import Table
-from sqlalchemy.orm import declarative_base, DeclarativeMeta
-from databases.defaults import *
 from modules import utils
+from modules.databases.imports import *
 
 Base = declarative_base()
 

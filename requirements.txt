@@ -3,3 +3,4 @@ py-cord==2.0.0b7
 SQLAlchemy-Utils==0.38.2
 SQLAlchemy==1.4.35
 asyncio==3.4.3
+confuse==1.7.0

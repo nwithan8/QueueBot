@@ -1,5 +1,3 @@
-import logging
-
 import discord
 from discord.ext import commands, bridge
 
@@ -9,7 +7,7 @@ from modules.logs import *
 info("Starting application...")
 
 logging.basicConfig(format='%(levelname)s:%(message)s',
-                    level=(logging.ERROR if credentials.SUPPRESS_LOGS else logging.INFO))
+                    level=logging.ERROR if credentials.SUPPRESS_LOGS else logging.INFO)
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -17,7 +15,7 @@ bot = bridge.Bot(credentials.BOT_PREFIX)
 
 formatter = commands.HelpCommand(show_check_failure=False)
 
-exts = [
+extensions = [
     "QueueBot"
 ]
 
@@ -33,6 +31,6 @@ async def on_ready():
 
 if __name__ == '__main__':
     info("Connecting to Discord...")
-    for ext in exts:
+    for ext in extensions:
         bot.load_extension(ext)
     bot.run(credentials.DISCORD_BOT_TOKEN)

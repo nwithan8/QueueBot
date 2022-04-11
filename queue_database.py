@@ -1,10 +1,10 @@
 import datetime
 from typing import List, Union
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, desc, Identity
+from sqlalchemy import Column, String, Boolean, DateTime, desc
 from sqlalchemy.ext.declarative import declarative_base
 
-import databases.base as db
+import modules.databases.base as db
 
 Base = declarative_base()
 
