@@ -1,0 +1,12 @@
+Discord:
+  # Right-click on your profile picture -> "Copy ID"
+  # List of IDs of users allowed to run admin commands
+  AdminIDs:
+    -
+  # List of roles, users with any of these roles are allowed to run admin commands
+  AdminRoleNames:
+    -
+
+Extras:
+  # See README.md for details
+  Analytics: false

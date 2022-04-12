@@ -1,0 +1,7 @@
+Logging: DEBUG
+
+Discord:
+  BotToken:
+  BotPrefix: "?"
+  # Right-click on your server's icon -> "Copy ID"
+  ServerID:

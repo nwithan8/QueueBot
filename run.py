@@ -11,10 +11,11 @@ bot_config = BotConfig(app_name="QueueBot")
 logging.basicConfig(format='%(levelname)s:%(message)s',
                     level=bot_config.log_level)
 
-intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
-bot = bridge.Bot(command_prefix=bot_config.bot_prefix)
+# intents = discord.Intents.default()
+# intents.message_content = True
+# intents.members = True
+intents = discord.Intents(messages=True, members=True, guilds=True)
+bot = bridge.Bot(command_prefix=bot_config.bot_prefix, intents=intents)
 formatter = commands.HelpCommand(show_check_failure=False)
 
 extensions = [

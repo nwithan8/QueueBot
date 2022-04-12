@@ -83,8 +83,8 @@ def user_does_not_have_role(user: discord.Member, role_name: str) -> bool:
 async def user_is_admin(cog: 'BaseCog', ctx: Union[BridgeContext, Context]) -> bool:
     # TODO: improve speed on this later
     # check IDs first, most likely less of them, but more strict
-    admin_ids = cog.get_admin_users(guild=ctx.guild)
-    if admin_ids and any(x in ctx.author.id for x in admin_ids):
+    admin_users = cog.get_admin_users(guild=ctx.guild)
+    if admin_users and ctx.author in admin_users:
         return True
     # check admin roles next
     admin_roles = cog.get_admin_roles(guild=ctx.guild)

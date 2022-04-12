@@ -9,11 +9,6 @@ import modules.databases.base as db
 Base = declarative_base()
 
 
-def _next_unprocessed(session) -> Union['QueueEntry', None]:
-    return session.query(QueueEntry).filter(QueueEntry.processed is False).order_by(
-        QueueEntry.timestamp).first()
-
-
 class QueueEntry:
     __tablename__ = "queue"
     timestamp = Column("timestamp", DateTime, nullable=False)
@@ -52,7 +47,7 @@ class QueueDatabase(db.SQLAlchemyDatabase):
 
         :return:
         """
-        return UserQueueEntry().next_unprocessed
+        return self.get_first_by_filters(table=UserQueueEntry, processed=False, order=desc(UserQueueEntry.timestamp))
 
     @db.table_exists(table_name='user_queue')
     def add_user_to_queue(self, user_id: int) -> None:

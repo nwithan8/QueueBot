@@ -1,10 +1,11 @@
 import discord
 from discord.ext.bridge import bridge_command, BridgeContext
+from discord.ext.commands import Context
 
-from queue_bot_configuration import QueueBotConfig
 from modules.base_cog import BaseCog
 from modules.discord_utils import send_error, is_admin
 from modules.utils import int_to_place
+from queue_bot_configuration import QueueBotConfig
 from queue_bot_database import QueueDatabase, UserQueueEntry
 
 
@@ -15,12 +16,12 @@ class QueueBot(BaseCog, name="QueueBot"):
 
     @bridge_command(name="queue-ping", aliases=["qping"])
     @is_admin
-    async def queue_ping(self, ctx: BridgeContext):
+    async def queue_ping(self, ctx: Context):
         """
         Test command to check if the bot is working.
         """
         # await is_admin(cog=self, ctx=ctx)
-        await ctx.respond("Pong!")
+        await ctx.send("Pong!")
 
     @bridge_command(name="queue-add", aliases=["qaad"])
     async def queue_add(self, ctx: BridgeContext):

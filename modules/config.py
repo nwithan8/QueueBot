@@ -1,13 +1,18 @@
 from typing import List
 
-import confuse
+import yaml
+import mergedeep
+from mergedeep import Strategy
 
 
 class Config:
     def __init__(self, app_name: str, config_files: List[str]):
-        self.config = confuse.Configuration(app_name)
+        self.app_name = app_name
+        self.config = {}
         for config_file in config_files:
-            self.config.set_file(filename=config_file)
+            with open(config_file, "r") as f:
+                data = yaml.load(f, Loader=yaml.SafeLoader)
+                mergedeep.merge(self.config, data, strategy=Strategy.REPLACE)
 
     def get(self, key: str, path: List[str] = None, default=None):
         try:
@@ -15,9 +20,7 @@ class Config:
                 path = []
             value = self.config
             for p in path:
-                value = value[p].get()
-            return value.get(key)
-        except confuse.NotFoundError:
-            return default
-        except confuse.ConfigTypeError:
+                value = value[p]
+            return value.get(key, default)
+        except KeyError:
             return default
