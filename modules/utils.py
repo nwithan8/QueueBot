@@ -1,3 +1,6 @@
+from typing import List
+
+
 def is_positive_int(n):
     return n.isdigit()
 
@@ -27,3 +30,19 @@ def int_to_place(n: int) -> str:
     elif last_digit == 3 and last_two_digits != 13:
         suffix = 'rd'
     return f"{n}{suffix}"
+
+
+class DynamicClassCreator:
+    def __init__(self):
+        self.created_classes = {}
+
+    def __call__(self, bases: List):
+        rep = ",".join([i.__name__ for i in bases])
+        if rep in self.created_classes:
+            return self.created_classes[rep]
+
+        class DynamicClass(*bases):
+            pass
+
+        self.created_classes[rep] = DynamicClass
+        return DynamicClass
