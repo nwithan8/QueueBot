@@ -8,13 +8,13 @@ For now, only works to queue users.
 
 Functions:
 
-- `/queue-add`: Adds the user to the queue.
-- `/queue-remove`: Removes the user from the queue.
-- `/queue-remove @demo_user`: Removes `@demo_user` from the queue (admin-only command).
-- `/queue-place`: Say the user's place in the queue.
-- `/queue-next`: Get the next user in the queue (admin-only command).
-- `/queue-export`: Export the queue to a CSV file (admin-only command).
-- `/queue-ping`: Ping the bot to check if it's online.
+- `/queue add`: Adds the user to the queue.
+- `/queue remove`: Removes the user from the queue.
+- `/queue remove @demo_user`: Removes `@demo_user` from the queue (admin-only command).
+- `/queue place`: Say the user's place in the queue.
+- `/queue next`: Get the next user in the queue (admin-only command).
+- `/queue export`: Export the queue to a CSV file (admin-only command).
+- `/queue ping`: Ping the bot to check if it's online.
 
 # Installation
 
