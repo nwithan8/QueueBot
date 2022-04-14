@@ -1,6 +1,7 @@
 from typing import List
 
 import discord
+from discord import SlashCommandGroup
 from discord.ext.commands import Cog
 
 from modules.cog_config import CogConfig
@@ -17,10 +18,6 @@ class BaseCog(Cog):
     def __init__(self, bot: discord.Bot, config: CogConfig):
         self.bot = bot
         self.config = config
-
-    def register_slash_commands(self, commands: List[SlashCommand]):
-        for command in commands:
-            self.bot.application_command(name=command.name, cls=discord.SlashCommand)(command.func)
 
     @property
     def admin_role_names(self) -> List[str]:
