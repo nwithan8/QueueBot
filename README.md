@@ -18,7 +18,7 @@ Functions:
 
 # Installation
 
-- Clone the repo
-- Copy `bot_config.yaml.example` to `bot_config.yaml` and fill it out
-- Copy `queue_bot_config.yaml.example` to `queue_bot_config.yaml` and fill it out
-- Run the bot with `python3 run.py`
+1. Clone the repo
+2. Copy `bot_config.yaml.example` to `bot_config.yaml` and fill it out
+3. Copy `queue_bot_config.yaml.example` to `queue_bot_config.yaml` and fill it out
+4. Run the bot with `python3 run.py`
