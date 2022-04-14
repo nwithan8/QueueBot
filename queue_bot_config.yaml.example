@@ -7,6 +7,12 @@ Discord:
   AdminRoleNames:
     -
 
+QueueTypes:
+  # List of queue types to be used
+  # Available queue types: "user", "item"
+  - "user"
+  - "item"
+
 Extras:
   # See README.md for details
   Analytics: false

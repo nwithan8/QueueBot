@@ -14,7 +14,7 @@ from queues.queue_bot_base import QueueBotBase
 
 
 class QueueBotUsers(QueueBotBase):
-    users_group = SlashCommandGroup(name="queue-users", description="Commands related to queuing users.")
+    users_group = SlashCommandGroup(name="user-queue", description="Commands related to queuing users.")
 
     def __init__(self, bot):
         super().__init__(bot=bot)
@@ -88,8 +88,7 @@ class QueueBotUsers(QueueBotBase):
         """
         Export the queue to a CSV.
         """
-        # await is_admin(cog=self, ctx=ctx)
-        if not self.users_queue_database.export_user_queue_to_csv("queue.csv"):
+        if not self.users_queue_database.export_user_queue_to_csv("user_queue.csv"):
             await send_error(ctx=ctx)
             return
-        await ctx.send(file=discord.File("queue.csv"))
+        await ctx.send(file=discord.File("user_queue.csv"))

@@ -29,9 +29,15 @@ class UserQueueEntry(QueueEntry, Base):
         super().__init__()
         self.user_id = f"{user_id}" if user_id else kwargs.get('user_id', None)
 
-    @property
-    def next_unprocessed(self) -> Union['UserQueueEntry', None]:
-        return _next_unprocessed(self.session)
+
+class ItemQueueEntry(QueueEntry, Base):
+    __tablename__ = 'item_queue'
+    item_value = Column("item_value", String(1000), primary_key=True, nullable=False)
+
+    @db.none_as_null
+    def __init__(self, item_value: str = None, **kwargs):
+        super().__init__()
+        self.item_value = item_value if item_value else kwargs.get('item_value', None)
 
 
 class QueueDatabase(db.SQLAlchemyDatabase):
@@ -174,3 +180,13 @@ class QueueDatabase(db.SQLAlchemyDatabase):
         :return:
         """
         return self.export_table_to_csv(table_name=UserQueueEntry.__tablename__, file_path=csv_file)
+
+    @db.table_exists(table_name='item_queue')
+    def export_item_queue_to_csv(self, csv_file: str) -> bool:
+        """
+        Export all items from the queue to a csv file
+
+        :param csv_file:
+        :return:
+        """
+        return self.export_table_to_csv(table_name=ItemQueueEntry.__tablename__, file_path=csv_file)
