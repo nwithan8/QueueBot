@@ -7,10 +7,20 @@ from modules.cog_config import CogConfig
 from modules.discord_utils import get_users, get_roles
 
 
+class SlashCommand:
+    def __init__(self, name: str, func):
+        self.name = name
+        self.func = func
+
+
 class BaseCog(Cog):
     def __init__(self, bot: discord.Bot, config: CogConfig):
         self.bot = bot
         self.config = config
+
+    def register_slash_commands(self, commands: List[SlashCommand]):
+        for command in commands:
+            self.bot.application_command(name=command.name, cls=discord.SlashCommand)(command.func)
 
     @property
     def admin_role_names(self) -> List[str]:
