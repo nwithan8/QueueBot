@@ -6,8 +6,8 @@ from discord.ext.bridge import bridge_command, BridgeContext
 from discord.ext.commands import Context
 from discord.commands import SlashCommandGroup
 
-from modules.base_cog import BaseCog, SlashCommand
-from modules.discord_utils import send_error, is_admin, user_is_admin
+from dbotbase.base_cog import BaseCog, SlashCommand
+from dbotbase.discord_utils import send_error, is_admin, user_is_admin
 from queue_bot_database import QueueDatabase, ItemQueueEntry
 from queues.queue_bot_base import QueueBotBase
 

@@ -4,7 +4,7 @@ from discord.ext.bridge import bridge_command, BridgeContext
 from discord.ext.commands import Context
 from discord.commands import SlashCommandGroup
 
-from modules.base_cog import BaseCog
+from dbotbase.base_cog import BaseCog
 from queue_bot_configuration import QueueBotConfig
 from queue_bot_database import QueueDatabase, UserQueueEntry
 
