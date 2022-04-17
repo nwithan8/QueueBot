@@ -24,4 +24,4 @@ Functions:
 4. Run the bot with `python3 run.py`
 
 # Red-compatible
-There is also a [Red-compatible version](https://github.com/nwithan8/nwithan8-cogs) of this cog, for those using the [Red Discord bot](https://docs.discord.red/en/stable/).
+There is also a [Red-compatible cog version](https://github.com/nwithan8/nwithan8-cogs) of this bot, for those using the [Red Discord bot](https://docs.discord.red/en/stable/).
