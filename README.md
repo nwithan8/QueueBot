@@ -22,3 +22,6 @@ Functions:
 2. Copy `bot_config.yaml.example` to `bot_config.yaml` and fill it out
 3. Copy `queue_bot_config.yaml.example` to `queue_bot_config.yaml` and fill it out
 4. Run the bot with `python3 run.py`
+
+# Red-compatible
+There is also a [Red-compatible version](https://github.com/nwithan8/nwithan8-cogs) of this cog, for those using the [Red Discord bot](https://docs.discord.red/en/stable/).
